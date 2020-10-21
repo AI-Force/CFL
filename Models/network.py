@@ -2,7 +2,7 @@ import numpy as np
 import tensorflow as tf
 import re
 import math
-from config import * 
+from ..config import *
 from .deform_conv_layer import deform_conv_op as deform_conv_op
 
 
@@ -393,7 +393,7 @@ class Network(object):
             else:
                 if relu:
                     output = tf.nn.relu(deconv)
-                output = devonv    
+                output = deconv
             return output    
 
 

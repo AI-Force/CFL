@@ -1,25 +1,21 @@
-import argparse
-import os
 import numpy as np
 import tensorflow as tf
 import scipy.misc
-from scipy import misc
-from matplotlib import pyplot as plt
 from PIL import Image
 import glob
 import time
-import math
 import os.path
-import config
-import Models
 
-from config import * 
+from .Models import LayoutEstimator_EquiConvs, LayoutEstimator_StdConvs
+from .config import *
+
 
 def preprocess(img):
     mean_color = [103.939, 116.779, 123.68] 
     r, g, b = tf.split(axis=3, num_or_size_splits=3, value=img ) 
     bgr = tf.concat(values=[b - mean_color[0], g - mean_color[1], r - mean_color[2]], axis=3)
     return bgr
+
 
 def evaluate(map):
     
@@ -71,9 +67,9 @@ def predict(image_path_list):
     rgb_ph = preprocess(rgb_ph1)
 
     if args.network == 'StdConvs':
-        net = Models.LayoutEstimator_StdConvs({'rgb_input':rgb_ph}, is_training = False)
+        net = LayoutEstimator_StdConvs({'rgb_input':rgb_ph}, is_training = False)
     elif args.network == 'EquiConvs':  
-        net = Models.LayoutEstimator_EquiConvs({'rgb_input':rgb_ph}, is_training = False)
+        net = LayoutEstimator_EquiConvs({'rgb_input':rgb_ph}, is_training = False)
    
     saver = tf.train.Saver() 
     with tf.Session() as sess:
@@ -91,7 +87,7 @@ def predict(image_path_list):
             filename = os.path.basename(name)
             
             # Do not overwrite results if they exists
-            #if os.path.isfile(os.path.join(args.results,'EM_test',filename + "_emap.jpg")):
+            # if os.path.isfile(os.path.join(args.results,'EM_test',filename + "_emap.jpg")):
             #    continue 
 
             img = Image.open(image_path)
@@ -123,7 +119,7 @@ def main():
     elapsed = time.time() - t
     print('Total time in seconds:',elapsed/1)
 
-    ## Give metrics
+    # Give metrics
     P_e, R_e, Acc_e, f1_e, IoU_e = evaluate('edges')
     print('EDGES: IoU: ' + str('%.3f' % IoU_e) + '; Accuracy: ' + str('%.3f' % Acc_e) + '; Precision: ' + str('%.3f' % P_e) + '; Recall: ' + str('%.3f' % R_e) + '; f1 score: ' + str('%.3f' % f1_e))
     P_c, R_c, Acc_c, f1_c, IoU_c = evaluate('corners')
@@ -133,12 +129,8 @@ def main():
     latex = [str('$%.3f$' % IoU_c) +" & "+ str('$%.3f$' % Acc_c) +" & "+ str('$%.3f$' % P_c) +" & "+ str('$%.3f$' % R_c) +" & "+ str('$%.3f$' % f1_c)]
     print(latex)
 
-    os._exit(0)
+    os.exit(0)
 
 
 if __name__ == '__main__':
     main()
-    
-
-    
-
