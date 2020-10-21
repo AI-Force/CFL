@@ -1,12 +1,10 @@
 import numpy as np
 import tensorflow as tf
-import scipy.misc
 from PIL import Image
 import glob
 import time
 import imageio
 import os.path
-
 from .Models import LayoutEstimator_EquiConvs, LayoutEstimator_StdConvs
 from .config import *
 
@@ -129,8 +127,6 @@ def main():
     #latex format
     latex = [str('$%.3f$' % IoU_c) +" & "+ str('$%.3f$' % Acc_c) +" & "+ str('$%.3f$' % P_c) +" & "+ str('$%.3f$' % R_c) +" & "+ str('$%.3f$' % f1_c)]
     print(latex)
-
-    os.exit(0)
 
 
 if __name__ == '__main__':
