@@ -64,7 +64,7 @@ if [ "$CONTINUE" = "1" ]; then
   #       -L $TF_LIB -ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=0
   # for gcc5-built tf
   g++ -std=c++11 -shared -o deform_conv.so deform_conv.cc deform_conv.cu.o \
-    -I $TF_INC -I $NSYNC_INC -fPIC -D GOOGLE_CUDA -lcudart -L $CUDA_HOME/lib64 -L $TF_LIB -ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=0
+    -I $TF_INC -I $NSYNC_INC -fPIC -D GOOGLE_CUDA -lcudart -L $CUDA_HOME/lib64 -L $TF_LIB -ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=1
 
   cd ..
 else
