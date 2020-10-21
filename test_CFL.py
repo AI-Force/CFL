@@ -4,6 +4,7 @@ import scipy.misc
 from PIL import Image
 import glob
 import time
+import imageio
 import os.path
 
 from .Models import LayoutEstimator_EquiConvs, LayoutEstimator_StdConvs
@@ -103,9 +104,9 @@ def predict(image_path_list):
             emap, cmap = sess.run([tf.nn.sigmoid(pred_edges),tf.nn.sigmoid(pred_corners)], feed_dict=fd)
             
             # Save results   
-            scipy.misc.imsave(os.path.join(args.results,'EM_test',filename + "_emap.jpg"), emap[0,:,:,0])
-            scipy.misc.imsave(os.path.join(args.results,'CM_test',filename + "_emap.jpg"), cmap[0,:,:,0])
-      
+            imageio.imwrite(os.path.join(args.results, 'EM_test', filename + "_emap.jpg"), emap[0, :, :, 0])
+            imageio.imwrite(os.path.join(args.results, 'CM_test',filename + "_emap.jpg"), cmap[0, :, :, 0])
+
                 
 def main():
 
