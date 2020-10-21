@@ -4,7 +4,7 @@ TF_INC=$(python -c 'import tensorflow as tf; print(tf.sysconfig.get_include())')
 TF_LIB=$(python -c 'import tensorflow as tf; print(tf.sysconfig.get_lib())')
 NSYNC_INC=$TF_INC"/external/nsync/public"
 # please modify $ARCH according to the following list and your gpu model.
-ARCH=sm_52
+ARCH=sm_61
 
 
 # If coming across: cudaCheckError() failed : invalid device function. change -arch=sm_xx accordingly.
@@ -29,7 +29,8 @@ fi
 
 
 
-CUDA_HOME=/usr/local/cuda-10.0/
+# CUDA_HOME=/usr/local/cuda-10.0/
+CUDA_HOME=~/miniconda3/envs/CFL/pkgs/cuda-toolkit/
 
 echo "Configuration variables:"
 echo "Tensorflow Include directory: $TF_INC" 
@@ -50,19 +51,20 @@ if [ "$CONTINUE" = "1" ]; then
 
 
   cd deform_conv_layer
-  nvcc -std=c++11 -ccbin=/usr/bin/g++-4.9 -c -o deform_conv.cu.o deform_conv.cu.cc -I $TF_INC -I $NSYNC_INC -D\
+  # nvcc -std=c++11 -ccbin=/usr/bin/g++-4.9 -c -o deform_conv.cu.o deform_conv.cu.cc -I $TF_INC -I $NSYNC_INC -D\
+  #           GOOGLE_CUDA=1 -x cu -Xcompiler -fPIC -L $CUDA_HOME/lib64 --expt-relaxed-constexpr -arch=$ARCH -DNDEBUG
+  nvcc -std=c++11 -ccbin=/usr/bin/g++ -c -o deform_conv.cu.o deform_conv.cu.cc -I $TF_INC -I $NSYNC_INC -D\
             GOOGLE_CUDA=1 -x cu -Xcompiler -fPIC -L $CUDA_HOME/lib64 --expt-relaxed-constexpr -arch=$ARCH -DNDEBUG
-
 
   ## if you install tf using already-built binary, or gcc version 4.x, uncomment the three lines below
 
 
-  g++-4.9 -std=c++11 -shared -o deform_conv.so deform_conv.cc deform_conv.cu.o -I\
-        $TF_INC -I $NSYNC_INC -fPIC -lcudart -L $CUDA_HOME/lib64 -D GOOGLE_CUDA=1 -Wfatal-errors \
-        -L $TF_LIB -ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=0 
+  # g++-4.9 -std=c++11 -shared -o deform_conv.so deform_conv.cc deform_conv.cu.o -I\
+  #       $TF_INC -I $NSYNC_INC -fPIC -lcudart -L $CUDA_HOME/lib64 -D GOOGLE_CUDA=1 -Wfatal-errors \
+  #       -L $TF_LIB -ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=0
   # for gcc5-built tf
-  # g++ -std=c++11 -shared -o deform_conv.so deform_conv.cc deform_conv.cu.o \
-  #   -I $TF_INC -I $NSYNC_INC -fPIC -D GOOGLE_CUDA -lcudart -L $CUDA_HOME/lib64 -L $TF_LIB -ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=0
+  g++ -std=c++11 -shared -o deform_conv.so deform_conv.cc deform_conv.cu.o \
+    -I $TF_INC -I $NSYNC_INC -fPIC -D GOOGLE_CUDA -lcudart -L $CUDA_HOME/lib64 -L $TF_LIB -ltensorflow_framework -D_GLIBCXX_USE_CXX11_ABI=0
 
   cd ..
 else
